@@ -49,7 +49,7 @@
         "model_type": "Mixed-Integer Linear Program (MILP)",
         "solver": "PuLP COIN-OR CBC",
         "solver_status": "Optimal",
-        "solve_duration_seconds": 1.4403,
+        "solve_duration_seconds": 0.2519,
         "variable_counts": {
             "continuous": 193,
             "binary": 48,

@@ -377,6 +377,11 @@ def build_and_solve_optimizer(target_multiplier=1.0, peak_penalty_weight=25.0, h
     # Decision variables
     # Continuous dispatch variables
     X = pulp.LpVariable.dicts("Prod", ((m, h) for m in machine_specs for h in hours), lowBound=0)
+    # X = {
+    #     (m, h): pulp.LpVariable(f"Prod_{m}_{h}", lowBound=0)
+    #     for m in machine_specs
+    #     for h in hours
+    # }
     Power = pulp.LpVariable.dicts("Power", ((m, h) for m in machine_specs for h in hours), lowBound=0)
     Peak_Demand = pulp.LpVariable("Peak_Demand", lowBound=0)
 
