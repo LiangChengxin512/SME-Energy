@@ -62,7 +62,7 @@ $$\mathbf{MEASURE} \longrightarrow \mathbf{UNDERSTAND} \longrightarrow \mathbf{D
    - Shaves peak grid demand by **8.08%** (12.51 kW reduction: 154.89 kW $\to$ 142.38 kW) and reduces daily electricity costs by **4.78%** (modeled savings: ₹1,127.79 / day = ₹338,337/year across 300 operating days/year).
    - **Enforces 100% throughput conservation** (4,500 kg daily finished yarn production maintained without shortfall).
 6. **CEA Carbon & Sustainability Accounting (`src/carbon_analysis.py`)**:
-   - 0.82 kg CO2e/kWh is used as a synthetic benchmark emission factor for this simulation (referencing India's CEA Baseline Database Version 19 methodology).
+   - 0.42 kg CO2e/kWh is used as a synthetic benchmark emission factor for this simulation.
    - Avoids an estimated 10.99 kg CO2e/day (3.30 t CO2e/year across 300 operating days/year) in indirect Scope 2 emissions through peak load shifting and efficiency.
 7. **Industrial Streamlit Dashboard (`dashboard/app.py`)**:
    - Industrial dark slate/green theme with interactive Plotly telemetry curves, machine drill-downs, explainable alerts, and optimization scorecards.
@@ -73,4 +73,4 @@ $$\mathbf{MEASURE} \longrightarrow \mathbf{UNDERSTAND} \longrightarrow \mathbf{D
 1. **Real-World SME Fit**: Rather than asking an SME to scrap their ₹40 Lakh spinning frame, the proposed deployment retrofits it with a standard DIN-rail multifunction energy meter and an external vibration sensor, offering a low-barrier retrofit telemetry approach where payback can be determined from pilot installation costs and verified annual savings.
 2. **Production-First Optimization**: The PuLP optimizer strictly enforces daily production targets ($\sum X_{m,h} = \text{Target}$). Modeled energy savings come from **smart load shifting away from the ₹10/kWh peak tariff**, not by shutting down the factory.
 3. **Explainable AI (XAI)**: We replace black-box alarm fatigue with the **4-Tier Explainability Model** (*Observed Data $\to$ Model Inference $\to$ Engineering Hypothesis $\to$ Recommended Action*), supporting early diagnostic investigation for plant technicians.
-4. **Credible Physics & Standards**: All vibration diagnostics adhere strictly to **ISO 10816-3**, and 0.82 kg CO2e/kWh is used as a synthetic benchmark emission factor for this simulation referencing the **Central Electricity Authority (CEA) Baseline Database v19** methodology.
+4. **Credible Physics & Standards**: All vibration diagnostics adhere strictly to **ISO 10816-3**, and 0.42 kg CO2e/kWh is used as a synthetic benchmark emission factor for this simulation referencing the **T.C. Enerji ve Tabii Kaynaklar Bakanlığı (Ministry of Energy and Natural Resources)** methodology.

@@ -122,7 +122,7 @@ ISO_10816_THRESHOLDS = {
 # Simulation benchmark assumption: 0.82 kg CO2e/kWh.
 # This emission factor is used for synthetic benchmarking and demonstration.
 # It is not an independently audited plant-specific electricity emission factor.
-DEFAULT_GRID_EMISSION_FACTOR = 0.82  # kg CO2e / kWh
+DEFAULT_GRID_EMISSION_FACTOR = 0.42  # kg CO2e / kWh
 
 # Environmental Equivalency Factors (EPA / BEE Benchmark Assumptions — Display/Interpretation Only)
 # These are display-only interpretation metrics and do NOT affect CO2 emissions, carbon avoided, SEC, or optimization objectives.

@@ -26,7 +26,7 @@ Based on standard Indian State Electricity Distribution Company (DISCOM) High-Te
 ## 3. Grid Carbon Emission Factors & Environmental Equivalencies
 
 > [!NOTE]
-> **Simulation benchmark assumption**: 0.82 kg CO2e/kWh. This emission factor is used for synthetic benchmarking and demonstration. It is not an independently audited plant-specific electricity emission factor.
+> **Simulation benchmark assumption**: 0.42 kg CO2e/kWh. This emission factor is used for synthetic benchmarking and demonstration. It is not an independently audited plant-specific electricity emission factor.
 
 - **Emission Boundary (Scope 2 Only)**:
   - This prototype models **electricity-related Scope 2 emissions only**.
@@ -35,7 +35,7 @@ Based on standard Indian State Electricity Distribution Company (DISCOM) High-Te
     - Refrigerant leakage or chemical process reaction emissions
     - Scope 3 supply chain, logistics, or upstream/downstream lifecycle emissions
 - **Central Electricity Authority (CEA) Indicative Grid Benchmarks**:
-  - National Grid Weighted Average Benchmark: **0.82 kg CO2e / kWh** (`DEFAULT_GRID_EMISSION_FACTOR`)
+  - National Grid Weighted Average Benchmark: **0.42 kg CO2e / kWh** (`DEFAULT_GRID_EMISSION_FACTOR`)
   - Regional State Grid Variations (for simulation scenario comparison):
     - Tamil Nadu (TANGEDCO): 0.79 kg CO2e / kWh
     - Maharashtra (MSEDCL): 0.85 kg CO2e / kWh
