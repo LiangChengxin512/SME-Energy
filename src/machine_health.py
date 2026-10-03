@@ -1,6 +1,6 @@
 """
 SME-EnergyIQ: Machine Health Intelligence & Explainable Alert Engine
-Target Industry: Indian Textile Manufacturing SME
+Target Industry: Turkish Textile Manufacturing SME
 
 Core Capabilities:
 1. ISO 10816-aligned Machine Health Scoring (0 - 100 scale)

@@ -1,14 +1,11 @@
 """
 SME-EnergyIQ: Health-Aware, Process-Coupled & Dyeing Batch Production & Energy Optimizer (V3 - Phase 5)
-Target Industry: Indian Textile Manufacturing SME (Spinning, Weaving & Dyeing)
+Target Industry: Turkish Textile Manufacturing SME (Spinning, Weaving & Dyeing)
 
 Engineering Formulation:
 1. Objective:
-   Minimize: Total Electricity Cost (ToD Tariffs) + Peak Demand Charges (₹ / kW)
-2. Tariffs (Indian DISCOM Standard):
-   - Peak (18:00 - 22:00)     : ₹10.00 / kWh (+33.3% surcharge)
-   - Normal (06:00 - 18:00)   : ₹7.50 / kWh
-   - Off-Peak (22:00 - 06:00) : ₹5.50 / kWh (-26.7% rebate)
+   Minimize: Total Electricity Cost (illustrative TRY time bands) + Peak Demand Penalty (TRY / kW)
+2. Tariffs: Illustrative Turkish SME scenario only; configure from the plant's supplier/OSB contract.
 3. Health-Aware Scheduling Policy (Simulation Assumptions):
    - NORMAL   : 100% capacity (unrestricted scheduling capability)
    - MEDIUM   : 100% capacity (early warning monitoring; conservative load recommended)
@@ -70,7 +67,7 @@ def build_and_solve_optimizer(target_multiplier=1.0, peak_penalty_weight=25.0, h
     
     hours = list(range(24))
     
-    # 1. Define hourly Time-of-Day tariffs (₹/kWh)
+    # 1. Define hourly scenario tariffs (TRY/kWh)
     tariffs = []
     for h in hours:
         if 18 <= h < 22:
@@ -390,7 +387,7 @@ def build_and_solve_optimizer(target_multiplier=1.0, peak_penalty_weight=25.0, h
     BatchActive = pulp.LpVariable.dicts("BatchActive", hours, cat=pulp.LpBinary)
 
     # Objective function
-    # Min: Total Electricity Cost (ToD Tariffs) + Peak Demand Charges (₹ / kW)
+    # Min: Total scenario electricity cost + peak-demand penalty (TRY / kW)
     total_energy_cost = pulp.lpSum([tariffs[h] * Power[m, h] for m in machine_specs for h in hours])
     model += total_energy_cost + (peak_penalty_weight * Peak_Demand)
 
@@ -775,7 +772,7 @@ def build_and_solve_optimizer(target_multiplier=1.0, peak_penalty_weight=25.0, h
     comparison = {
         "metrics": {
             "Total_Energy_kWh": {"baseline": round(base_energy, 2), "optimized": round(opt_energy, 2), "unit": "kWh"},
-            "Total_Cost_Rs": {"baseline": round(base_cost, 2), "optimized": round(opt_cost, 2), "unit": "Rs.", "savings": cost_savings_rs, "improvement_pct": cost_savings_pct},
+            "Total_Cost_Rs": {"baseline": round(base_cost, 2), "optimized": round(opt_cost, 2), "unit": "TRY", "savings": cost_savings_rs, "improvement_pct": cost_savings_pct},
             "Peak_Demand_kW": {"baseline": round(base_peak, 2), "optimized": round(opt_peak, 2), "unit": "kW", "reduction_kw": peak_reduction_kw, "improvement_pct": peak_reduction_pct},
             "Yarn_Production_kg": {"baseline": round(base_yarn, 1), "optimized": round(opt_yarn, 1), "unit": "kg", "note": "100% Exact Throughput Conserved" if preservation_pct >= 99.9 else "Shortfall due to Infeasibility"},
             "Specific_Energy_Consumption_SEC": {"baseline": round(base_sec, 4), "optimized": round(opt_sec, 4), "unit": "kWh/kg", "improvement_pct": sec_improvement_pct},
@@ -796,9 +793,11 @@ def build_and_solve_optimizer(target_multiplier=1.0, peak_penalty_weight=25.0, h
             "grid_emission_factor_kg_per_kwh": DEFAULT_GRID_EMISSION_FACTOR,
             "grid_emission_factor_disclaimer": "Simulation benchmark assumption — not an audited plant-specific electricity emission factor.",
             "tariffs_used": {
-                "peak_18_to_22": 10.0,
-                "normal_06_to_18": 7.5,
-                "off_peak_22_to_06": 5.5
+                "peak_18_to_22": TOD_TARIFF_SLABS["PEAK"]["rate"],
+                "normal_06_to_18": TOD_TARIFF_SLABS["NORMAL"]["rate"],
+                "off_peak_22_to_06": TOD_TARIFF_SLABS["OFF_PEAK"]["rate"],
+                "currency": "TRY",
+                "disclaimer": "Illustrative time-of-use scenario; actual Turkish industrial tariffs depend on supplier, voltage, OSB and contract."
             },
             "solver_used": "PuLP CBC MILP (Mixed-Integer Linear Program)",
             "health_derating_policy": "Simulation assumptions: HIGH=85% max capacity, CRITICAL=0% (restricted), NORMAL/MEDIUM=100%",
@@ -834,10 +833,9 @@ if __name__ == "__main__":
     print(f"Batch Verification   : Contiguous: True | No Late Starts: {val_s.get('no_late_starts_enforced')} | No Overlaps: {val_s.get('no_overlaps_enforced')} | Valid: {val_s.get('is_valid')}")
     print(f"Process Coupling     : HVAC->Spinning (gamma={dep.get('coupling_ratio_gamma_m3_per_kg')} m3/kg, Enforced: {dep.get('dependency_satisfied_all_hours')}, Min Margin: {dep.get('min_hourly_margin_m3')} m3)")
     print(f"Throughput Preserved : {h_sum['production_preservation_pct']}% (Baseline: {m['Yarn_Production_kg']['baseline']} kg == Optimized: {m['Yarn_Production_kg']['optimized']} kg)")
-    print(f"Energy Cost (Rs.)    : Baseline: Rs. {m['Total_Cost_Rs']['baseline']:,.2f} -> Optimized: Rs. {m['Total_Cost_Rs']['optimized']:,.2f}")
-    print(f"Cost Savings         : Rs. {m['Total_Cost_Rs']['savings']:,.2f} ({m['Total_Cost_Rs']['improvement_pct']}%)")
+    print(f"Energy Cost (TRY)    : Baseline: TRY {m['Total_Cost_Rs']['baseline']:,.2f} -> Optimized: TRY {m['Total_Cost_Rs']['optimized']:,.2f}")
+    print(f"Cost Savings         : TRY {m['Total_Cost_Rs']['savings']:,.2f} ({m['Total_Cost_Rs']['improvement_pct']}%)")
     print(f"Peak Demand (kW)     : Baseline: {m['Peak_Demand_kW']['baseline']} kW -> Optimized: {m['Peak_Demand_kW']['optimized']} kW ({m['Peak_Demand_kW']['improvement_pct']}% Shaved)")
     print(f"Specific Energy (SEC): Baseline: {m['Specific_Energy_Consumption_SEC']['baseline']} -> Optimized: {m['Specific_Energy_Consumption_SEC']['optimized']} kWh/kg")
     print(f"Carbon Avoided       : {m['CO2_Emissions_kg']['avoided_kg']} kg CO2e")
     print("="*65)
-

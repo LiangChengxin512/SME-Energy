@@ -1,7 +1,7 @@
 """
 SME-EnergyIQ: Industrial Utility and Configuration Module
 Contains physical threshold constants, ISO 10816 vibration standards,
-Time-of-Day tariff rules, and data validation helpers for Indian textile SMEs.
+Turkey scenario tariff rules, and data validation helpers for textile SMEs.
 """
 
 import os
@@ -119,21 +119,22 @@ ISO_10816_THRESHOLDS = {
     'ZONE_D_UNACCEPTABLE': 7.1     # Danger of imminent damage; stop machine
 }
 
-# Simulation benchmark assumption: 0.82 kg CO2e/kWh.
-# This emission factor is used for synthetic benchmarking and demonstration.
-# It is not an independently audited plant-specific electricity emission factor.
-DEFAULT_GRID_EMISSION_FACTOR = 0.42  # kg CO2e / kWh
+# Turkey simulation benchmark; confirm against the factory's supplier contract
+# and current Turkish Ministry/EPDK annual grid factor before audited reporting.
+DEFAULT_GRID_EMISSION_FACTOR = 0.42  # kg CO2e / kWh; user-provided scenario value
 
 # Environmental Equivalency Factors (EPA / BEE Benchmark Assumptions — Display/Interpretation Only)
 # These are display-only interpretation metrics and do NOT affect CO2 emissions, carbon avoided, SEC, or optimization objectives.
 TREE_CO2_ABSORPTION_KG_PER_YEAR = 21.77  # kg CO2 absorbed per mature tree per year
 CAR_CO2_KG_PER_KM = 0.192                # kg CO2 emitted per passenger car-kilometer
 
-# Standard Indian Industrial Time-of-Day (ToD) Tariff Structure (DISCOM standard)
+# Illustrative TRY time-of-use scenario for optimization only. Turkey's actual
+# industrial billing depends on connection voltage, supplier contract, OSB and
+# tariff period; this is NOT a published universal Turkish ToD tariff.
 TOD_TARIFF_SLABS = {
-    'PEAK': {'rate': 10.00, 'hours': [(18, 22)], 'description': 'Evening Peak (18:00-22:00)', 'color': '#d62728'},
-    'NORMAL': {'rate': 7.50, 'hours': [(6, 18)], 'description': 'Day Normal (06:00-18:00)', 'color': '#1f77b4'},
-    'OFF_PEAK': {'rate': 5.50, 'hours': [(22, 24), (0, 6)], 'description': 'Night Off-Peak (22:00-06:00)', 'color': '#2ca02c'}
+    'PEAK': {'rate': 5.50, 'hours': [(18, 22)], 'description': 'Scenario Peak (18:00-22:00)', 'color': '#d62728'},
+    'NORMAL': {'rate': 4.50, 'hours': [(6, 18)], 'description': 'Scenario Day (06:00-18:00)', 'color': '#1f77b4'},
+    'OFF_PEAK': {'rate': 3.50, 'hours': [(22, 24), (0, 6)], 'description': 'Scenario Night (22:00-06:00)', 'color': '#2ca02c'}
 }
 
 # Consistent Severity-to-Health coupling bounds (Defensible Industrial Mapping)

@@ -1,6 +1,6 @@
 """
 SME-EnergyIQ: Industrial Data Processing & Validation Pipeline
-Target Industry: Indian Textile Manufacturing SME
+Target Industry: Turkish Textile Manufacturing SME
 
 Performs:
 - Rigorous data quality auditing (missing values, duplicates, range violations)
@@ -82,6 +82,12 @@ def clean_and_engineer_features(df):
     # Ensure datetime format
     df_clean["Timestamp"] = pd.to_datetime(df_clean["Timestamp"])
     df_clean = df_clean.sort_values(by=["Machine_ID", "Timestamp"]).reset_index(drop=True)
+
+    # Re-rate historical/synthetic input against the active Turkey scenario,
+    # even when reusing a raw CSV generated under the former locale.
+    tariff_tags = df_clean["Timestamp"].map(get_tariff_rate)
+    df_clean["Tariff_Rs_per_kWh"] = tariff_tags.map(lambda item: item[0])
+    df_clean["Peak_OffPeak"] = tariff_tags.map(lambda item: item[1])
     
     # Impute missing values with forward fill if present
     if df_clean.isnull().values.any():
@@ -142,7 +148,7 @@ def clean_and_engineer_features(df):
         df_clean["Vibration_mm_s"] / (df_clean["Power_kW"] + 1.0)
     ).round(4)
     
-    # Feature 6: Cumulative Energy Cost in INR
+    # Feature 6: Cumulative energy cost (TRY; legacy column name retained)
     df_clean["Energy_Cost_Rs"] = (df_clean["Energy_kWh"] * df_clean["Tariff_Rs_per_kWh"]).round(2)
     
     # Re-sort to chronological factory-wide order
@@ -177,4 +183,3 @@ if __name__ == "__main__":
         print(f"Sensor Range Violations: {report['sensor_bounds_violations']}")
         print("\n=== PROCESSED DATA SAMPLE ===")
         print(df_clean[["Timestamp", "Machine_ID", "Load_Ratio", "SEC_Proxy", "ISO_Vib_Zone", "Energy_Cost_Rs"]].head())
-

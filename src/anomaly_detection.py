@@ -1,6 +1,6 @@
 """
 SME-EnergyIQ: Industrial AI Anomaly Detection Engine
-Target Industry: Indian Textile Manufacturing SME
+Target Industry: Turkish Textile Manufacturing SME
 
 Core AI Technique:
 - Context-Aware Multi-variate Isolation Forest (scikit-learn)

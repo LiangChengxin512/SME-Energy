@@ -23,16 +23,22 @@ Open your browser at `http://localhost:8501` to interact with the 7 pages:
 3. **Machine Health & Diagnostics**: ISO 10816 vibration severity curves and deep machine drill-down.
 4. **Explainable AI Alerts**: 4-tier transparent alert feed.
 5. **Production Optimization**: Baseline vs. PuLP load shifting comparison and peak demand shaving.
-6. **Carbon & Sustainability**: Configurable CEA grid factor slider and carbon intensity.
-7. **Architecture & SME Roadmap**: Low-cost IoT retrofit kit BOM (< ₹18,000/machine) and 5-phase rollout.
+6. **Carbon & Sustainability**: Configurable 0.42 kg CO2e/kWh Turkey simulation benchmark and carbon intensity.
+7. **Architecture & SME Roadmap**: Indicative Turkish SME retrofit budget and 5-phase rollout.
+
+Optional periodic recomputation of the current telemetry and dashboard artifacts:
+```bash
+streamlit run dashboard/live_monitor.py
+```
+The independent live monitor updates its telemetry panel in place (default every 5 seconds) and can replay the synthetic sample stream without page reloads. For periodic backend reprocessing of input files, run `python src/refresh_service.py --interval 300` in another terminal. This does not provide physical live sensor readings. The normal one-shot `python src/pipeline.py` and `streamlit run dashboard/app.py` commands remain available.
 
 ---
 
 ## Executive Summary
 
-Small and Medium Enterprises (SMEs) in textile hubs operate on thin margins (3–8%), with electricity accounting for up to 30% of operational costs. Most factories face:
+The product targets Turkish textile SMEs, with Bursa, Denizli and Gaziantep as illustrative cluster settings. Replace demonstration assumptions with each plant's supplier/OSB contract and production telemetry. Common audit opportunities include:
 - Aging legacy machinery without integrated telemetry.
-- Punitive Time-of-Day (ToD) peak electricity surcharges (up to ₹10/kWh during 18:00–22:00).
+- Flexible loads that may be scheduled against contracted time bands and demand charges.
 - Idle energy waste during shift changeovers and unloader valve failures.
 - Black-box AI tools that fail to provide actionable physical maintenance guidance.
 
@@ -59,18 +65,20 @@ $$\mathbf{MEASURE} \longrightarrow \mathbf{UNDERSTAND} \longrightarrow \mathbf{D
    - Industrial vibration severity scoring (Zones A, B, C, D) and 0–100 composite health scores.
    - Structured 4-tier alert feed: **Observed Data $\to$ Model Inference $\to$ Engineering Hypothesis $\to$ Recommended Action**.
 5. **PuLP MILP Production Schedule Optimizer (`src/optimization.py`)**:
-   - Shaves peak grid demand by **8.08%** (12.51 kW reduction: 154.89 kW $\to$ 142.38 kW) and reduces daily electricity costs by **4.78%** (modeled savings: ₹1,127.79 / day = ₹338,337/year across 300 operating days/year).
-   - **Enforces 100% throughput conservation** (4,500 kg daily finished yarn production maintained without shortfall).
-6. **CEA Carbon & Sustainability Accounting (`src/carbon_analysis.py`)**:
+   - Compares baseline and optimized schedules for cost and peak-demand changes using illustrative TRY time bands.
+   - Preserves modeled production targets when feasible; outputs are scenario estimates, not verified savings.
+6. **Carbon & Sustainability Accounting (`src/carbon_analysis.py`)**:
    - 0.42 kg CO2e/kWh is used as a synthetic benchmark emission factor for this simulation.
-   - Avoids an estimated 10.99 kg CO2e/day (3.30 t CO2e/year across 300 operating days/year) in indirect Scope 2 emissions through peak load shifting and efficiency.
+   - Estimates Scope 2 emissions and modeled avoided emissions using the configured factor and optimization schedule.
 7. **Industrial Streamlit Dashboard (`dashboard/app.py`)**:
    - Industrial dark slate/green theme with interactive Plotly telemetry curves, machine drill-downs, explainable alerts, and optimization scorecards.
 
 ---
 ## Talking Points
 
-1. **Real-World SME Fit**: Rather than asking an SME to scrap their ₹40 Lakh spinning frame, the proposed deployment retrofits it with a standard DIN-rail multifunction energy meter and an external vibration sensor, offering a low-barrier retrofit telemetry approach where payback can be determined from pilot installation costs and verified annual savings.
-2. **Production-First Optimization**: The PuLP optimizer strictly enforces daily production targets ($\sum X_{m,h} = \text{Target}$). Modeled energy savings come from **smart load shifting away from the ₹10/kWh peak tariff**, not by shutting down the factory.
+1. **Real-World SME Fit**: Retrofit existing assets with smart meters and condition sensors; use local supplier quotations and verified pilot savings to evaluate payback.
+2. **Production-First Optimization**: The PuLP optimizer enforces daily production targets ($\sum X_{m,h} = \text{Target}$) when feasible. Cost results depend on the configured contract scenario.
 3. **Explainable AI (XAI)**: We replace black-box alarm fatigue with the **4-Tier Explainability Model** (*Observed Data $\to$ Model Inference $\to$ Engineering Hypothesis $\to$ Recommended Action*), supporting early diagnostic investigation for plant technicians.
-4. **Credible Physics & Standards**: All vibration diagnostics adhere strictly to **ISO 10816-3**, and 0.42 kg CO2e/kWh is used as a synthetic benchmark emission factor for this simulation referencing the **T.C. Enerji ve Tabii Kaynaklar Bakanlığı (Ministry of Energy and Natural Resources)** methodology.
+4. **Physics & Standards**: Vibration diagnostics use ISO 10816 zone thresholds. The 0.42 kg CO2e/kWh factor is referencing from Turkish Ministry of Energy and Natural Resources.
+
+See [Turkey localization, objective formulation and KPI catalogue](docs/turkey_localization.md) for assumptions, tariff caveats, the MILP objective/constraints and benefit metrics.

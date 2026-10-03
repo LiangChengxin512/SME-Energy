@@ -1,6 +1,6 @@
 """
 SME-EnergyIQ: Energy & Specific Energy Consumption (SEC) Analytics Engine
-Target Industry: Indian Textile Manufacturing SME
+Target Industry: Turkish Textile Manufacturing SME
 
 Formulas & Engineering Concepts:
 1. Fundamental Energy Relationship: E(kWh) = P(kW) * t(h)
@@ -146,12 +146,12 @@ if __name__ == "__main__":
     print("\n=== MACHINE ENERGY & SEC BREAKDOWN ===")
     for m_id, data in summary["machine_breakdown"].items():
         print(f"  {m_id} ({data['type']}):")
-        print(f"    Energy: {data['total_energy_kwh']} kWh ({data['share_of_factory_pct']}%) | Cost: Rs. {data['total_cost_rs']}")
+        print(f"    Energy: {data['total_energy_kwh']} kWh ({data['share_of_factory_pct']}%) | Cost: TRY {data['total_cost_rs']}")
         print(f"    SEC: {data['sec_kwh_per_unit']} kWh/unit | Peak: {data['peak_power_kw']} kW")
         
     print("\n=== TARIFF TIME-OF-DAY BREAKDOWN ===")
     for t_zone, data in summary["tariff_window_breakdown"].items():
-        print(f"  {t_zone}: {data['total_kwh']} kWh ({data['share_pct']}%) -> Rs. {data['cost_rs']} ({data['cost_share_pct']}% of bill)")
+        print(f"  {t_zone}: {data['total_kwh']} kWh ({data['share_pct']}%) -> TRY {data['cost_rs']} ({data['cost_share_pct']}% of bill)")
         
     print("\nDaily SEC Sample:")
     print(df_daily.head())

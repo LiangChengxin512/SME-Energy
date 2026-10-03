@@ -1,6 +1,6 @@
 """
 SME-EnergyIQ: Industrial Synthetic Data Generator
-Target Industry: Indian Textile Manufacturing SME (Spinning & Weaving Mill)
+Target Industry: Turkish Textile Manufacturing SME (Spinning & Weaving Mill)
 
 Simulates 4 core machines:
 1. MOTOR_01      : Ring Spinning Frame Main Drive Motor (55 kW rated)
@@ -9,8 +9,8 @@ Simulates 4 core machines:
 4. HVAC_01       : Spinning Hall Humidification & Climate Control Plant (60 kW rated)
 
 Captures:
-- 15-minute industrial interval data (standard for Indian utility ToD metering)
-- Time-of-Day (ToD) tariffs: Peak (₹10.0), Normal (₹7.5), Off-Peak (₹5.5)
+- 15-minute industrial interval data (synthetic telemetry)
+- Illustrative Turkish SME scenario ToD tariffs, configured centrally in utils.py
 - Electrical physics (P = sqrt(3) * V * I * pf)
 - Machine operational states (RUNNING_OPTIMAL, IDLE_UNLOADED, RUNNING_DEGRADED, MAINTENANCE, OFF)
 - 7 distinct industrial anomaly classes with ground truth
@@ -19,25 +19,22 @@ Captures:
 import os
 import numpy as np
 import pandas as pd
+from utils import TOD_TARIFF_SLABS
 
 # Set fixed seed for reproducibility across hackathon evaluations
 np.random.seed(42)
 
 def get_tariff(timestamp):
     """
-    Returns Time-of-Day (ToD) tariff for Indian Industrial Consumers.
-    Standard Indian DISCOM slab:
-      - Peak (18:00 - 22:00): ₹10.00 / kWh
-      - Normal (06:00 - 18:00): ₹7.50 / kWh
-      - Off-Peak / Night (22:00 - 06:00): ₹5.50 / kWh
+    Returns the configured illustrative Turkey scenario rate (TRY/kWh).
     """
     hour = timestamp.hour
     if 18 <= hour < 22:
-        return 10.00, "PEAK"
+        return TOD_TARIFF_SLABS['PEAK']['rate'], "PEAK"
     elif 6 <= hour < 18:
-        return 7.50, "NORMAL"
+        return TOD_TARIFF_SLABS['NORMAL']['rate'], "NORMAL"
     else:
-        return 5.50, "OFF_PEAK"
+        return TOD_TARIFF_SLABS['OFF_PEAK']['rate'], "OFF_PEAK"
 
 def generate_textile_factory_dataset(
     days=14,
@@ -158,7 +155,7 @@ def generate_textile_factory_dataset(
                 pf = 0.89 + np.random.normal(0, 0.01)
 
             # Three-phase electrical calculations:
-            # V_line = 415V nominal, with +/- 2% Indian grid fluctuation
+            # V_line = 415V nominal, with synthetic +/- 2% supply fluctuation
             voltage_v = 415.0 + 8.0 * np.sin(2 * np.pi * hour / 24) + np.random.normal(0, 2.5)
             if power_kw > 0.1:
                 # I = (P * 1000) / (sqrt(3) * V * pf)

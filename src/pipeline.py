@@ -21,7 +21,7 @@ def run_full_pipeline(force_regenerate: bool = False):
     start_time = time.time()
     logger.info("=================================================================")
     logger.info("SME-EnergyIQ: INITIATING FULL INDUSTRIAL INTELLIGENCE PIPELINE")
-    logger.info("Target: Indian Textile SME (Spinning & Weaving Mill)")
+    logger.info("Target: Turkish Textile SME (Spinning & Weaving Mill; synthetic scenario)")
     logger.info("=================================================================")
     
     # 1. MEASURE: Ingest or Optionally Regenerate Sensor Data
@@ -51,7 +51,7 @@ def run_full_pipeline(force_regenerate: bool = False):
     energy_analysis.analyze_factory_energy()
     
     # 6. OPTIMIZE & SUSTAIN: PuLP MILP Production Scheduling & Carbon Accounting
-    logger.info("Step 6/6: Solving PuLP MILP optimizer and computing CEA carbon footprint...")
+    logger.info("Step 6/6: Solving PuLP MILP optimizer and computing scenario carbon footprint...")
     optimization.build_and_solve_optimizer()
     carbon_analysis.generate_sustainability_report()
     
@@ -64,4 +64,3 @@ def run_full_pipeline(force_regenerate: bool = False):
 if __name__ == "__main__":
     force_regen = "--force-regenerate" in sys.argv
     run_full_pipeline(force_regenerate=force_regen)
-

@@ -1,13 +1,12 @@
 """
 SME-EnergyIQ: Carbon Accounting & Industrial Sustainability Engine
-Target Industry: Indian Textile Manufacturing SME
+Target Industry: Turkish Textile Manufacturing SME
 
 Core Methodology:
 1. Carbon Emission Formula:
    CO2e (kg) = Energy_Consumption (kWh) * Emission_Factor (kg CO2e / kWh)
-2. Indian Grid Reference:
-   Central Electricity Authority (CEA) Baseline Database for Indian Power Sector (v19)
-   Default Indian National Grid Weighted Average: 0.82 kg CO2e / kWh
+2. Turkey scenario benchmark:
+   Default grid factor: 0.42 kg CO2e / kWh (user-requested simulation assumption; verify before audited reporting)
 3. Configurable Parameter:
    Users can adjust for state DISCOM grids (e.g. TANGEDCO, MSEDCL, UGVCL)
    or renewable captive solar/wind PPAs (Power Purchase Agreements).
@@ -30,11 +29,9 @@ from utils import (
 )
 
 DISCOM_GRID_FACTORS = {
-    "National_Grid_CEA_Avg": DEFAULT_GRID_EMISSION_FACTOR,
-    "Tamil_Nadu_TANGEDCO": 0.79,
-    "Maharashtra_MSEDCL": 0.85,
-    "Gujarat_UGVCL": 0.81,
-    "Green_PPA_Solar_Blend": 0.35 # 60% Solar + 40% Grid
+    "Turkey_Simulation_Benchmark": DEFAULT_GRID_EMISSION_FACTOR,
+    "Lower_Carbon_Supply_Scenario": 0.25,
+    "Renewable_PPA_Scenario": 0.05
 }
 
 def calculate_carbon_footprint(
@@ -124,9 +121,9 @@ def generate_sustainability_report(
     report = {
         "metadata": {
             "emission_factor_used_kg_per_kwh": emission_factor,
-            "emission_factor_source": "Central Electricity Authority (CEA) Baseline Database v19 (Govt. of India reference assumption)",
+            "emission_factor_source": "User-provided Turkey simulation benchmark (0.42 kg CO2e/kWh); confirm against current national and supplier-specific data before external reporting.",
             "disclaimer": (
-                "Simulation benchmark assumption: 0.82 kg CO2e/kWh. "
+                "Simulation benchmark assumption: 0.42 kg CO2e/kWh. "
                 "This emission factor is used for synthetic benchmarking and demonstration. "
                 "It is not an independently audited plant-specific electricity emission factor."
             )
@@ -174,4 +171,3 @@ if __name__ == "__main__":
     print(f"Yarn Carbon Intensity: {fp['carbon_intensity_kg_co2_per_kg_yarn']} kg CO2e / kg yarn")
     print(f"Equivalent Impact    : Equal to {rep['equivalencies']['tree_seedlings_grown_10_years']:,} mature trees absorption")
     print("="*60)
-

@@ -1,7 +1,6 @@
 """
-SME-EnergyIQ: Industrial Energy Intelligence & Optimization Platform
+SME-Energy: Industrial Energy Intelligence & Optimization Platform
 AI-Powered Energy Intelligence & Physics-Based Asset Health Monitoring
-Target Industry: Indian Textile Manufacturing SME (Spinning & Weaving)
 """
 
 import sys
@@ -20,16 +19,20 @@ import textwrap
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 try:
     import pipeline
-    from utils import DEFAULT_GRID_EMISSION_FACTOR, TREE_CO2_ABSORPTION_KG_PER_YEAR, CAR_CO2_KG_PER_KM
+    from utils import DEFAULT_GRID_EMISSION_FACTOR, TREE_CO2_ABSORPTION_KG_PER_YEAR, CAR_CO2_KG_PER_KM, TOD_TARIFF_SLABS
 except ImportError:
-    DEFAULT_GRID_EMISSION_FACTOR = 0.82
+    # Turkey scenario default configured in src/utils.py
+    DEFAULT_GRID_EMISSION_FACTOR = 0.42
     TREE_CO2_ABSORPTION_KG_PER_YEAR = 21.77
     CAR_CO2_KG_PER_KM = 0.192
+    TOD_TARIFF_SLABS = {
+        "PEAK": {"rate": 5.50}, "NORMAL": {"rate": 4.50}, "OFF_PEAK": {"rate": 3.50}
+    }
 
 # Streamlit Page Setup
 st.set_page_config(
-    page_title="SME-EnergyIQ | Industrial Energy Intelligence Platform",
-    page_icon="⚡",
+    page_title="SME-Energy | Industrial Energy Intelligence Platform",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -45,7 +48,7 @@ st.markdown("""
     }
 
     /* =========================================================
-       SME-EnergyIQ THEME — OVERVIEW PAGE
+       SME-Energy THEME — OVERVIEW PAGE
        ========================================================= */
 
     /* Main page heading */
@@ -497,7 +500,7 @@ st.markdown("""
 def load_all_data():
     enriched_path = "results/factory_data_enriched.csv"
     if not os.path.exists(enriched_path):
-        with st.spinner("Initializing SME-EnergyIQ Intelligence Pipeline..."):
+        with st.spinner("Initializing SME-Energy Intelligence Pipeline..."):
             pipeline.run_full_pipeline()
 
     df = pd.read_csv(enriched_path)
@@ -530,8 +533,8 @@ def get_smart_manufacturing_loading_html():
             <!-- Header Branding -->
             <div class="sme-loading-header">
                 <div class="sme-loading-logo">
-                    <span class="sme-lightning-icon">⚡</span>
-                    <span class="sme-logo-text">SME-<span class="sme-logo-accent">EnergyIQ</span></span>
+                    <span class="sme-lightning-icon"></span>
+                    <span class="sme-logo-text">SME-<span class="sme-logo-accent">Energy</span></span>
                 </div>
                 <div class="sme-loading-subtitle">Industrial Energy Intelligence Platform</div>
                 <div class="sme-loading-badge">SMART MANUFACTURING TELEMETRY ENGINE</div>
@@ -547,7 +550,7 @@ def get_smart_manufacturing_loading_html():
                 <span class="sme-hier-arrow">›</span>
                 <span class="sme-hier-step">AI ANALYSIS</span>
                 <span class="sme-hier-arrow">›</span>
-                <span class="sme-hier-step sme-hier-active">SME-ENERGYIQ</span>
+                <span class="sme-hier-step sme-hier-active">SME-ENERGY</span>
             </div>
 
             <!-- 4 Core Industrial Assets -->
@@ -662,9 +665,9 @@ def get_smart_manufacturing_loading_html():
                 </div>
 
                 <div class="sme-ai-hub">
-                    <div class="sme-ai-hub-icon">⚙️</div>
+                    <div class="sme-ai-hub-icon">M</div>
                     <div class="sme-ai-hub-text">
-                        <span class="sme-ai-hub-title">⚡ AI ENERGY INTELLIGENCE</span>
+                        <span class="sme-ai-hub-title">AI ENERGY INTELLIGENCE</span>
                         <span class="sme-ai-hub-sub">Neural Telemetry Aggregation & Multi-Dimensional Diagnostic Engine</span>
                     </div>
                 </div>
@@ -692,7 +695,7 @@ def get_smart_manufacturing_loading_html():
                     <span class="sme-status-msg sme-msg-2">Loading machine telemetry...</span>
                     <span class="sme-status-msg sme-msg-3">Initializing energy intelligence...</span>
                     <span class="sme-status-msg sme-msg-4">Preparing industrial insights...</span>
-                    <span class="sme-status-msg sme-msg-5">SME-EnergyIQ Ready</span>
+                    <span class="sme-status-msg sme-msg-5">SME-Energy Ready</span>
                 </div>
                 <div class="sme-progress-track">
                     <div class="sme-progress-fill"></div>
@@ -1160,8 +1163,8 @@ with st.sidebar:
     st.markdown("""
     <div class="sidebar-brand-container">
         <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.65rem; line-height: 1;">⚡</span>
-            <span class="sidebar-brand-title">SME-<span class="sidebar-brand-accent">EnergyIQ</span></span>
+            <span style="font-size: 1.65rem; line-height: 1;"></span>
+            <span class="sidebar-brand-title"><span class="sidebar-brand-accent">SME-Energy</span></span>
         </div>
         <span class="sidebar-brand-subtitle">
             Industrial Energy Intelligence Platform
@@ -1173,29 +1176,33 @@ with st.sidebar:
     page = st.radio(
         "Navigation",
         [
-            "🏭 Factory Overview",
-            "⚡ Energy & ToD Monitoring",
-            "🩺 Machine Health & Diagnostics",
-            "🚨 Explainable AI Alerts",
-            "📈 Production Optimization",
-            "🌱 Carbon & Sustainability",
-            "🏛️ Architecture & SME Roadmap"
+            "Factory Overview",
+            "Energy & ToD Monitoring",
+            "Machine Health & Diagnostics",
+            "Explainable AI Alerts",
+            "Production Optimization",
+            "Carbon & Sustainability",
+            "Architecture & SME Roadmap"
         ]
     )
 
     st.markdown("---")
-    st.markdown("#### **Plant Context: Textile SME**")
+    st.markdown("#### **Plant Context: Turkish Textile SME**")
+    st.caption("Illustrative scenario values; replace with the factory's actual supplier and OSB contract.")
     st.markdown("""
-    - **Location**: Tirupur / Surat Cluster
+    - **Location**: Bursa / Denizli / Gaziantep textile cluster (scenario context)
     - **Contract Demand**: 160 kW
-    - **Supply Tariff**: ToD Slab HT-1
-      * Peak (18-22h): ₹10.00/kWh
-      * Normal (06-18h): ₹7.50/kWh
-      * Off-Peak (22-06h): ₹5.50/kWh
+    - **Supply Tariff**: Illustrative time-band scenario (TRY/kWh)
     - **Target Output**: Ring Spun Combed Yarn
     """)
+    st.markdown(
+        f"**Scenario time bands**  \n"
+        f"Peak 18–22: ₺{TOD_TARIFF_SLABS['PEAK']['rate']:.2f}/kWh · "
+        f"Day 06–18: ₺{TOD_TARIFF_SLABS['NORMAL']['rate']:.2f}/kWh · "
+        f"Night 22–06: ₺{TOD_TARIFF_SLABS['OFF_PEAK']['rate']:.2f}/kWh"
+    )
     st.markdown("---")
-    if st.button("🔄 Rerun AI & Optimization Pipeline"):
+    if st.button("Rerun AI & Optimization Pipeline"):
         pipeline.run_full_pipeline()
         st.cache_data.clear()
         st.success("Pipeline refreshed successfully!")
@@ -1204,10 +1211,10 @@ with st.sidebar:
 # -------------------------------------------------------------
 # PAGE 1: FACTORY OVERVIEW
 # -------------------------------------------------------------
-if page == "🏭 Factory Overview":
+if page == "Factory Overview":
     st.markdown("""
     <div class="overview-header-container" style="background:transparent !important; border:none !important; box-shadow:none !important; padding:4px 0 0 0; margin-bottom:18px;">
-        <h1 class="overview-page-title" style="color:#008A00 !important; font-size:1.85rem !important; font-weight:800 !important; margin:0 0 6px 0; padding:0; line-height:1.25; forced-color-adjust:none !important;">⚡ SME-EnergyIQ | Industrial Operations Overview</h1>
+        <h1 class="overview-page-title" style="color:#008A00 !important; font-size:1.85rem !important; font-weight:800 !important; margin:0 0 6px 0; padding:0; line-height:1.25; forced-color-adjust:none !important;">SME-Energy | Industrial Operations Overview</h1>
         <p class="overview-page-subtitle" style="color:#A8B8C5 !important; font-size:0.94rem !important; margin:0 0 14px 0; padding:0; line-height:1.4; forced-color-adjust:none !important;">Textile SME Energy Command Center — Ring Spinning, Air Compressors, Dyeing Pumps & Climate Control</p>
         <div class="overview-page-divider" style="border:none !important; border-top:1px solid #008A00 !important; margin:0 0 20px 0; opacity:0.60; width:100%; forced-color-adjust:none !important;"></div>
     </div>
@@ -1253,7 +1260,7 @@ if page == "🏭 Factory Overview":
         st.markdown(f"""
         <div class="kpi-card">
             <div class="kpi-title">14-Day Energy Cost</div>
-            <div class="kpi-value">₹{total_cost_rs:,.0f}</div>
+            <div class="kpi-value">₺{total_cost_rs:,.0f}</div>
             <div class="kpi-sub">Total: {total_energy_kwh:,.0f} kWh</div>
         </div>
         """, unsafe_allow_html=True)
@@ -1340,7 +1347,7 @@ if page == "🏭 Factory Overview":
     # ---------------------------------------------------------
     # Production & Efficiency Section
     # ---------------------------------------------------------
-    st.markdown("### **🏭 Production & Efficiency**")
+    st.markdown("### **Production & Efficiency**")
     st.markdown("Quantifying manufacturing throughput against specific energy intensity (*SEC = Total Energy / Production Output*).")
 
     p_col1, p_col2, p_col3, p_col4 = st.columns(4)
@@ -1405,10 +1412,10 @@ if page == "🏭 Factory Overview":
 # -------------------------------------------------------------
 # PAGE 2: ENERGY & ToD MONITORING
 # -------------------------------------------------------------
-elif page == "⚡ Energy & ToD Monitoring":
+elif page == "Energy & ToD Monitoring":
     st.markdown("""
     <div class="sme-page-header">
-        <h1><span>⚡</span> Machine-Level Energy Monitoring & Time-of-Day Analysis</h1>
+        <h1><span></span> Machine-Level Energy Monitoring & Time-of-Day Analysis</h1>
         <p>Fundamental Relationship: Energy (kWh) = Power (kW) × Time (h) | ToD Tariff Cost Allocation</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1466,7 +1473,7 @@ elif page == "⚡ Energy & ToD Monitoring":
                 "Machine Type": stats["type"],
                 "Total Energy (kWh)": f"{stats['total_energy_kwh']:,.1f}",
                 "Share of Plant (%)": f"{stats['share_of_factory_pct']}%",
-                "Total Cost (₹)": f"₹{stats['total_cost_rs']:,.0f}",
+                "Total Cost (₺)": f"₺{stats['total_cost_rs']:,.0f}",
                 "Specific Energy (SEC)": f"{stats['sec_kwh_per_unit']} kWh/unit",
                 "Peak Power (kW)": f"{stats['peak_power_kw']} kW",
                 "Avg Power (kW)": f"{stats['avg_power_kw']} kW"
@@ -1592,22 +1599,22 @@ elif page == "⚡ Energy & ToD Monitoring":
             st.plotly_chart(fig_t, use_container_width=True)
 
         with c2:
-            st.markdown("#### **Electricity Bill Impact (Rupees)**")
+            st.markdown("#### **Electricity Bill Impact (TRY)**")
             fig_c = px.bar(
                 x=list(t_data.keys()),
                 y=[v["cost_rs"] for v in t_data.values()],
-                title="Total Tariff Cost (₹) Incurred by Slab",
+                title="Total Tariff Cost (₺) Incurred by Slab",
                 color=list(t_data.keys()),
                 color_discrete_map={"PEAK": "#EF4444", "NORMAL": "#3B82F6", "OFF_PEAK": "#10B981"},
-                labels={"x": "ToD Slab", "y": "Cost (₹)"}
+                labels={"x": "ToD Slab", "y": "Cost (₺)"}
             )
             fig_c.update_layout(template="plotly_white")
             st.plotly_chart(fig_c, use_container_width=True)
 
         st.info("""
-        💡 **Key Industrial Takeaway for Judges**: Notice that while **PEAK hours** account for only ~14.8% of energy consumed,
-        they generate over **20.7% of the total electricity bill** due to the ₹10.00/kWh tariff. Shifting flexible batch loads
-        (such as Dyeing Pumps and Air Storage charging) into the ₹5.50/kWh OFF-PEAK night slab unlocks substantial savings.
+        **Key Industrial Takeaway for Judges**: Notice that while **PEAK hours** account for only ~14.8% of energy consumed,
+        This view compares each time band using the illustrative Turkish SME scenario rates shown in the sidebar. Shifting flexible batch loads
+        (such as dyeing pumps and air storage charging) into the lower-cost scenario window may reduce modeled cost; actual contract terms must be configured.
         """)
 
     with tab3:
@@ -1635,10 +1642,10 @@ elif page == "⚡ Energy & ToD Monitoring":
 # -------------------------------------------------------------
 # PAGE 3: MACHINE HEALTH & DIAGNOSTICS
 # -------------------------------------------------------------
-elif page == "🩺 Machine Health & Diagnostics":
+elif page == "Machine Health & Diagnostics":
     st.markdown("""
     <div class="sme-page-header">
-        <h1><span>🩺</span> Machine Health & Vibration Monitoring</h1>
+        <h1><span></span> Machine Health & Vibration Monitoring</h1>
         <p>Vibration Severity References, Thermal Headroom & Physics-Based Asset Health Scoring</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1688,7 +1695,7 @@ elif page == "🩺 Machine Health & Diagnostics":
     flagged_records = m_df[m_df["Severity"].isin(["HIGH", "CRITICAL"])]
     st.markdown("#### **Diagnostic Investigation Log: Why Was This Machine Flagged?**")
     if not flagged_records.empty:
-        st.warning(f"⚠️ Machine {selected_machine} recorded {len(flagged_records)} abnormal condition events in the 14-day observation window.")
+        st.warning(f"Machine {selected_machine} recorded {len(flagged_records)} abnormal condition events in the 14-day observation window.")
         sample_ev = flagged_records.iloc[0]
         st.markdown(f"""
         - **Timestamp**: `{sample_ev['Timestamp']}`
@@ -1697,13 +1704,13 @@ elif page == "🩺 Machine Health & Diagnostics":
         - **Observed Physical Evidence**: Power reached `{sample_ev['Power_kW']:.1f} kW`, Temperature reached `{sample_ev['Temperature_C']:.1f}°C`, Vibration peaked at `{sample_ev['Vibration_mm_s']:.2f} mm/s`.
         """)
     else:
-        st.success(f"✅ Machine {selected_machine} operated within nominal vibration and thermal thresholds.")
+        st.success(f"Machine {selected_machine} operated within nominal vibration and thermal thresholds.")
 
     # ---------------------------------------------------------
     # Maintenance Intelligence Panel
     # ---------------------------------------------------------
     st.markdown("---")
-    st.markdown("### **🛠️ Maintenance Intelligence**")
+    st.markdown("### **Maintenance Intelligence**")
     st.markdown("Operator-friendly investigation summary synthesizing physics-based asset scoring, telemetry patterns, and AI anomaly detection.")
 
     has_active_anomaly = latest_m["Severity"] in ["HIGH", "CRITICAL"] or latest_m["Health_Score"] < 80
@@ -1795,15 +1802,15 @@ elif page == "🩺 Machine Health & Diagnostics":
         </div>
     </div>
     """, unsafe_allow_html=True)
-    st.caption("ℹ️ Telemetry-driven investigation hypotheses for maintenance guidance; requires on-site physical verification by qualified personnel.")
+    st.caption("Telemetry-driven investigation hypotheses for maintenance guidance; requires on-site physical verification by qualified personnel.")
 
 # -------------------------------------------------------------
 # PAGE 4: EXPLAINABLE AI ALERTS
 # -------------------------------------------------------------
-elif page == "🚨 Explainable AI Alerts":
+elif page == "Explainable AI Alerts":
     st.markdown("""
     <div class="sme-page-header">
-        <h1><span>🚨</span> 4-Tier Explainable Industrial AI Alert Feed</h1>
+        <h1><span></span> 4-Tier Explainable Industrial AI Alert Feed</h1>
         <p>No Black Boxes: Observed Data → Model Inference → Engineering Hypothesis → Recommended Action</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1999,15 +2006,15 @@ elif page == "🚨 Explainable AI Alerts":
                     st.session_state["alert_actions"][alert_key] = "Marked for Investigation"
                     st.rerun()
 
-            st.caption("ℹ️ Session-only UI triage state for prototype demonstration. Does not dispatch automated external work orders.")
+            st.caption("Session-only UI triage state for prototype demonstration. Does not dispatch automated external work orders.")
 
 # -------------------------------------------------------------
 # PAGE 5: PRODUCTION OPTIMIZATION
 # -------------------------------------------------------------
-elif page == "📈 Production Optimization":
+elif page == "Production Optimization":
     st.markdown("""
     <div class="sme-page-header">
-        <h1><span>📈</span> PuLP MILP Production Schedule & Peak Load Shifting</h1>
+        <h1><span></span> PuLP MILP Production Schedule & Peak Load Shifting</h1>
         <p>100% Target Throughput Preservation | Minimize Time-of-Day Tariff Cost + Shave Peak Grid Demand</p>
     </div>
     """, unsafe_allow_html=True)
@@ -2020,8 +2027,8 @@ elif page == "📈 Production Optimization":
         st.markdown(f"""
         <div class="kpi-card">
             <div class="kpi-title">Daily Energy Cost</div>
-            <div class="kpi-value">₹{m['Total_Cost_Rs']['optimized']:,.0f}</div>
-            <div class="kpi-sub" style="color:#059669">▼ ₹{m['Total_Cost_Rs']['savings']:,.0f} ({m['Total_Cost_Rs']['improvement_pct']}%) Saved</div>
+            <div class="kpi-value">₺{m['Total_Cost_Rs']['optimized']:,.0f}</div>
+            <div class="kpi-sub" style="color:#059669">▼ ₺{m['Total_Cost_Rs']['savings']:,.0f} ({m['Total_Cost_Rs']['improvement_pct']}%) Saved</div>
         </div>
         """, unsafe_allow_html=True)
     with c2:
@@ -2091,7 +2098,7 @@ elif page == "📈 Production Optimization":
         x0=18, x1=22,
         fillcolor="#FEE2E2", opacity=0.5,
         layer="below", line_width=0,
-        annotation_text="PEAK TARIFF WINDOW (₹10.00 / kWh)",
+        annotation_text="PEAK TARIFF WINDOW (₺5.50 / kWh scenario)",
         annotation_position="top left"
     )
 
@@ -2109,7 +2116,7 @@ elif page == "📈 Production Optimization":
     st.markdown("#### **Baseline vs. Optimized Comprehensive Scorecard**")
     scorecard_data = [
         {"Metric": "Total Daily Energy Consumed", "Baseline": f"{m['Total_Energy_kWh']['baseline']} kWh", "Optimized": f"{m['Total_Energy_kWh']['optimized']} kWh", "Improvement": "Preserved Throughput"},
-        {"Metric": "Total Daily Electricity Cost", "Baseline": f"₹{m['Total_Cost_Rs']['baseline']:,.2f}", "Optimized": f"₹{m['Total_Cost_Rs']['optimized']:,.2f}", "Improvement": f"▼ ₹{m['Total_Cost_Rs']['savings']:,.2f} ({m['Total_Cost_Rs']['improvement_pct']}%)"},
+        {"Metric": "Total Daily Electricity Cost", "Baseline": f"₺{m['Total_Cost_Rs']['baseline']:,.2f}", "Optimized": f"₺{m['Total_Cost_Rs']['optimized']:,.2f}", "Improvement": f"▼ ₺{m['Total_Cost_Rs']['savings']:,.2f} ({m['Total_Cost_Rs']['improvement_pct']}%)"},
         {"Metric": "Max Peak Grid Demand", "Baseline": f"{m['Peak_Demand_kW']['baseline']} kW", "Optimized": f"{m['Peak_Demand_kW']['optimized']} kW", "Improvement": f"▼ {m['Peak_Demand_kW']['reduction_kw']} kW ({m['Peak_Demand_kW']['improvement_pct']}% Shaved)"},
         {"Metric": "Production Throughput (Yarn)", "Baseline": f"{m['Yarn_Production_kg']['baseline']} kg", "Optimized": f"{m['Yarn_Production_kg']['optimized']} kg", "Improvement": "100.0% Conserved (No Shortfall)"},
         {"Metric": "Specific Energy Consumption (SEC)", "Baseline": f"{m['Specific_Energy_Consumption_SEC']['baseline']} kWh/kg", "Optimized": f"{m['Specific_Energy_Consumption_SEC']['optimized']} kWh/kg", "Improvement": f"▼ {m['Specific_Energy_Consumption_SEC'].get('improvement_pct', 0.0)}% Efficiency"}
@@ -2135,16 +2142,16 @@ elif page == "📈 Production Optimization":
             "Improvement": imp_ci_str
         })
     st.dataframe(pd.DataFrame(scorecard_data), use_container_width=True, hide_index=True)
-    st.caption("ℹ️ *Note: CO2 emissions and Carbon Intensity reflect electricity-related Scope 2 emissions based on simulation benchmark (0.82 kg CO2e/kWh). Throughput is 100% conserved.*")
+    st.caption("ℹ️ *Note: CO2 emissions and Carbon Intensity reflect electricity-related Scope 2 emissions based on simulation benchmark (0.42 kg CO2e/kWh). Throughput is 100% conserved.*")
 
 # -------------------------------------------------------------
 # PAGE 6: CARBON & SUSTAINABILITY
 # -------------------------------------------------------------
-elif page == "🌱 Carbon & Sustainability":
+elif page == "Carbon & Sustainability":
     st.markdown("""
     <div class="sme-page-header">
-        <h1><span>🌱</span> Industrial Carbon Accounting & Sustainability</h1>
-        <p>Electricity-Related Emissions Reporting | Configurable Grid Factor (0.82 kg CO₂/kWh)</p>
+        <h1><span></span> Industrial Carbon Accounting & Sustainability</h1>
+        <p>Electricity-Related Emissions Reporting | Turkey simulation benchmark (0.42 kg CO₂e/kWh)</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -2171,9 +2178,9 @@ elif page == "🌱 Carbon & Sustainability":
         )
     with c_info:
         st.markdown(f"""
-        - **Grid Emission Factor**: 0.82 kg CO2e/kWh used as a synthetic benchmark for this simulation.
-        - **Scope 2 Boundary**: Covers purchased grid electricity using configurable grid emission factor (0.82 kg CO2e/kWh benchmark).
-        - *Benchmark Disclaimer*: {meta.get('disclaimer', 'Grid emission factor: 0.82 kg CO2e/kWh used as a synthetic benchmark for this simulation.')}
+        - **Grid Emission Factor**: 0.42 kg CO2e/kWh used as a synthetic benchmark for this simulation.
+        - **Scope 2 Boundary**: Covers purchased grid electricity using configurable grid emission factor (0.42 kg CO2e/kWh benchmark).
+        - *Benchmark Disclaimer*: {meta.get('disclaimer', 'Grid emission factor: 0.42 kg CO2e/kWh used as a synthetic benchmark for this simulation.')}
         """)
 
     total_factory_kwh = footprint.get("total_energy_consumed_kwh", 42002.64)
@@ -2306,18 +2313,18 @@ elif page == "🌱 Carbon & Sustainability":
         """, unsafe_allow_html=True)
 
     st.markdown("#### **Dual Co-Benefit: Electricity Cost Savings & Decarbonization**")
-    st.info(f"💡 **Synergy Analysis**: The PuLP MILP optimization achieves **₹{cost_savings_daily:,.0f}/day** in electricity cost savings (~₹{annual_cost_savings:,.0f}/year) primarily through ToD peak load shifting, while abating **{opt_avoided_co2:.2f} kg CO2e/day** (~{annual_avoided_t:.2f} tonnes CO2e/year) through eliminating idle energy waste while conserving **100% of finished yarn throughput** (4,500 kg/day).")
+    st.info(f"**Synergy Analysis**: The PuLP MILP optimization achieves **₺{cost_savings_daily:,.0f}/day** in electricity cost savings (~₺{annual_cost_savings:,.0f}/year) primarily through scenario time-band load shifting, while abating **{opt_avoided_co2:.2f} kg CO2e/day** (~{annual_avoided_t:.2f} tonnes CO2e/year) through eliminating idle energy waste while conserving **100% of finished yarn throughput** (4,500 kg/day).")
 
-    st.caption("🛡️ **GHG Protocol Scope Boundary**: *Modeled electricity-related Scope 2 emissions only. Does not include Scope 1 (direct combustion / diesel generators), refrigerants, or Scope 3 (supply chain).*")
+    st.caption("**GHG Protocol Scope Boundary**: *Modeled electricity-related Scope 2 emissions only. Does not include Scope 1 (direct combustion / diesel generators), refrigerants, or Scope 3 (supply chain).*")
 
 # -------------------------------------------------------------
 # PAGE 7: SYSTEM ARCHITECTURE & SME ROADMAP
 # -------------------------------------------------------------
-elif page == "🏛️ Architecture & SME Roadmap":
+elif page == "Architecture & SME Roadmap":
     st.markdown("""
     <div class="sme-page-header">
-        <h1><span>🏛️</span> System Architecture & Low-Cost SME Adoption Plan</h1>
-        <p>End-to-End Edge-to-Cloud Pipeline Designed for Indian Textile Manufacturers</p>
+        <h1><span></span> System Architecture & Low-Cost SME Adoption Plan</h1>
+        <p>End-to-End Energy Audit & Automated Decision Pipeline for Turkish Textile SMEs</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -2348,20 +2355,21 @@ elif page == "🏛️ Architecture & SME Roadmap":
     c1, c2 = st.columns(2)
 
     with c1:
-        st.markdown("### **Low-Cost Retrofit BOM for Indian SMEs**")
+        st.markdown("### **Indicative Retrofit BOM for Turkish SMEs**")
         st.markdown("""
-        Textile SMEs operate on thin margins (3-8%). SME-EnergyIQ avoids expensive machine replacements:
+        Textile SMEs operate on thin margins (3-8%). SME-Energy avoids expensive machine replacements:
 
         | Component | Typical Specification | Est. Reference Cost |
         |---|---|---|
-        | **Industrial 3-Phase Energy Meter** | Multi-function Modbus RTU meter | ₹4,500 – ₹7,000 |
-        | **Non-Invasive CT Clamps** | Split-core current transducers | ₹1,200 / 3-phase set |
-        | **Industrial Vibration Sensor** | Loop-powered accelerometer | ₹3,500 |
-        | **Temperature Sensor** | Surface thermocouple / RTD sensor | ₹1,500 |
-        | **Edge Gateway** | Industrial Edge Gateway / Embedded IPC | ₹6,500 |
-        | **Software Platform** | SME-EnergyIQ Intelligence Platform | Cloud / Local Edge |
+        | **Industrial 3-Phase Energy Meter** | Multi-function Modbus RTU meter | ₺8,000–₺14,000 |
+        | **Non-Invasive CT Clamps** | Split-core current transducers | ₺2,000–₺4,000 / 3-phase set |
+        | **Industrial Vibration Sensor** | Loop-powered accelerometer | ₺5,000–₺12,000 |
+        | **Temperature Sensor** | Surface thermocouple / RTD sensor | ₺1,500–₺4,000 |
+        | **Edge Gateway** | Industrial Edge Gateway / Embedded IPC | ₺8,000–₺20,000 |
+        | **Estimated Hardware Total** | Per-machine demo budget | **₺24,500–₺54,000** |
+        | **Software Platform** | SME-Energy Intelligence Platform | Cloud / Local Edge |
 
-        *Indicative prototype reference — actual pilot cost depends on equipment, installation and vendor quotations.*
+        *Budget placeholders for the Turkey demo, not vendor quotes. Installation, wiring, calibration, taxes and software are excluded; confirm with local suppliers.*
 
         **Payback Evaluation:**
         Payback is evaluated during pilot deployment using verified savings and actual installation cost.
@@ -2383,9 +2391,8 @@ elif page == "🏛️ Architecture & SME Roadmap":
            - Add vibration and surface temperature monitoring.
            - Activate 4-tier explainable alert feed.
         4. **Phase 4: PuLP Production Optimization (Month 4-6)**
-           - Automate shift load-shifting from peak ₹10/kWh to off-peak ₹5.5/kWh.
+           - Model flexible production loads against the configured TRY time-band scenario.
            - Shave contract demand penalties.
         5. **Phase 5: ESG & Carbon Accounting (Ongoing)**
            - Automated electricity-related carbon reporting using a configurable emissions factor.
         """)
-
