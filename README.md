@@ -6,6 +6,12 @@
 ---
 
 ## Quick Start & Demonstration Guide
+### 0. Setup environment
+Python 3.13 in Conda
+
+To install package:
+
+```pip install -r requirements```
 
 ### 1. Run the Full Intelligence Pipeline
 To execute data generation, data quality auditing, AI model training, ISO health scoring, PuLP optimization, and carbon calculations:
